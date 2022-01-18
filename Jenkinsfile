@@ -14,7 +14,9 @@ pipeline {
         }
         stage('Build Docker Image') {
             when {
-                branch 'master'
+                expression {
+                    return env.GIT_BRANCH == "origin/master"
+                }
             }
             steps {
                 script {
@@ -27,7 +29,9 @@ pipeline {
         }
         stage('Push Docker Image') {
             when {
-                branch 'master'
+                expression {
+                    return env.GIT_BRANCH == "origin/master"
+                }
             }
             steps {
                 script {
@@ -40,7 +44,9 @@ pipeline {
         }
         stage('CanaryDeploy') {
             when {
-                branch 'master'
+                expression {
+                    return env.GIT_BRANCH == "origin/master"
+                }
             }
             environment { 
                 CANARY_REPLICAS = 1
@@ -55,7 +61,9 @@ pipeline {
         }
         stage('DeployToProduction') {
             when {
-                branch 'master'
+                expression {
+                    return env.GIT_BRANCH == "origin/master"
+                }
             }
             environment { 
                 CANARY_REPLICAS = 0
