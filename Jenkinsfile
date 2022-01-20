@@ -3,7 +3,6 @@ pipeline {
     environment {
         //be sure to replace "bhavukm" with your own Docker Hub username
         DOCKER_IMAGE_NAME = "radleap/train-schedule"
-        DOCKERHUB_CREDS= credentials('dockerhub-credentials')
     }
     stages {
         stage('Build') {
