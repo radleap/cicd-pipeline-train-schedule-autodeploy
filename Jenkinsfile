@@ -1,9 +1,38 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@radleap 
+radleap
+/
+cicd-pipeline-train-schedule-autodeploy
+Public
+forked from bhavukm/cicd-pipeline-train-schedule-autodeploy
+Code
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+cicd-pipeline-train-schedule-autodeploy/Jenkinsfile
+@radleap
+radleap adding docker tag :latest
+Latest commit 39ffa74 19 minutes ago
+ History
+ 3 contributors
+@radleap@whboyd@bhavukm
+87 lines (87 sloc)  2.6 KB
+   
 pipeline {
     agent any
     environment {
         //be sure to replace "bhavukm" with your own Docker Hub username
-        DOCKER_IMAGE_NAME = "train-schedule"
-        DOCKERHUB_CREDS=credentials('docker-hub-credentials')
+        DOCKER_IMAGE_NAME = "radleap/train-schedule:latest"
     }
     stages {
         stage('Build') {
@@ -21,9 +50,10 @@ pipeline {
             }
             steps {
                 script {
-                sh """
-                    docker build -t $DOCKERHUB_CREDS_USR/$DOCKER_IMAGE_NAME:latest .
-                """
+                    app = docker.build(DOCKER_IMAGE_NAME)
+                    app.inside {
+                        sh 'echo Hello, World!'
+                    }
                 }
             }
         }
@@ -34,11 +64,14 @@ pipeline {
                 }
             }
             steps {
-                sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'
-                sh 'docker push $DOCKERHUB_CREDS_USR/$DOCKER_IMAGE_NAME:latest'
-                sh 'docker logout'
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
                 }
             }
+        }
         stage('CanaryDeploy') {
             when {
                 expression {
