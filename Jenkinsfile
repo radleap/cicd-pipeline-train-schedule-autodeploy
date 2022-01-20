@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = "radleap/train-schedule:latest"
+        DOCKER_IMAGE_NAME = "radleap/train-schedule"
     }
     stages {
         stage('Build') {
