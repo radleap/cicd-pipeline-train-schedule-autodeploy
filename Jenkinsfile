@@ -2,7 +2,8 @@ pipeline {
     agent any
     environment {
         //be sure to replace "bhavukm" with your own Docker Hub username
-        DOCKER_IMAGE_NAME = "radleap/train-schedule:latest"
+        DOCKER_IMAGE_NAME = "train-schedule"
+        DOCKERHUB_CREDS=credentials('docker-hub-credentials')
     }
     stages {
         stage('Build') {
@@ -20,10 +21,9 @@ pipeline {
             }
             steps {
                 script {
-                    app = docker.build(DOCKER_IMAGE_NAME)
-                    app.inside {
-                        sh 'echo Hello, World!'
-                    }
+                sh """
+                    docker build -t $DOCKERHUB_CREDS_USR/$DOCKER_IMAGE_NAME:latest .
+                """
                 }
             }
         }
@@ -34,14 +34,11 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        app.push("${env.BUILD_NUMBER}")
-                        app.push("latest")
-                    }
+                sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'
+                sh 'docker push $DOCKERHUB_CREDS_USR/$DOCKER_IMAGE_NAME:latest'
+                sh 'docker logout'
                 }
             }
-        }
         stage('CanaryDeploy') {
             when {
                 expression {
