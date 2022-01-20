@@ -1,37 +1,6 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@radleap 
-radleap
-/
-cicd-pipeline-train-schedule-autodeploy
-Public
-forked from bhavukm/cicd-pipeline-train-schedule-autodeploy
-Code
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-cicd-pipeline-train-schedule-autodeploy/Jenkinsfile
-@radleap
-radleap adding docker tag :latest
-Latest commit 39ffa74 19 minutes ago
- History
- 3 contributors
-@radleap@whboyd@bhavukm
-87 lines (87 sloc)  2.6 KB
-   
 pipeline {
     agent any
     environment {
-        //be sure to replace "bhavukm" with your own Docker Hub username
         DOCKER_IMAGE_NAME = "radleap/train-schedule:latest"
     }
     stages {
